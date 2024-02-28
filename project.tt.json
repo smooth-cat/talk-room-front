@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "talk-room-front",
+  "description": "在线聊天室",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
