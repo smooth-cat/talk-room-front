@@ -1,3 +1,4 @@
+const path = require('path');
 const config = {
   projectName: 'talk-room-front',
   date: '2024-2-28',
@@ -6,6 +7,9 @@ const config = {
     640: 2.34 / 2,
     750: 1,
     828: 1.81 / 2
+  },
+  alias: {
+    '@': path.resolve(__dirname, '..', 'src'),
   },
   sourceRoot: 'src',
   outputRoot: 'dist',
@@ -44,6 +48,9 @@ const config = {
   },
   h5: {
     publicPath: '/',
+    router: {
+      mode: 'browser', // 或者是 'browser'
+    },
     staticDirectory: 'static',
     postcss: {
       autoprefixer: {
@@ -56,6 +63,14 @@ const config = {
         config: {
           namingPattern: 'module', // 转换模式，取值为 global/module
           generateScopedName: '[name]__[local]___[hash:base64:5]'
+        }
+      }
+    },
+    devServer: {
+      proxy: {
+        '/api/': {
+          target: 'http://localhost:3000',
+          changeOrigin: true
         }
       }
     }

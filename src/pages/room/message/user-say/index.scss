@@ -1,0 +1,43 @@
+@import '@/mixin.scss';
+.user-say-wrap {
+  /* 判断是自己还是别人 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .msg-user-say {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    .avatar {
+      @include avatar(48px)
+    }
+
+    .title-content {
+      padding-top: 14px;
+      .msg-user-say-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        .msg-user-say-name {
+          font-size: 38px;
+          font-weight: 400;
+          transform: translateY(-3px);
+        }
+
+        .msg-user-say-time {
+          font-size: 28px;
+          font-weight: 300;
+          color: #d6d6d6;
+        }
+      }
+
+      .msg-user-say-content {
+        margin-top: -16px;
+        font-weight: 300;
+        max-width: 400px;
+        word-break: break-all;
+        word-wrap: break-word;
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+@import '@/mixin.scss';
+.user-list {
+  .user-list-child {
+    display: flex;
+    align-items: center;
+    .user-list-list {
+      display: flex;
+      align-items: center;
+      .avatar {
+        position: relative;
+        margin-left: -30px;
+        @include avatar(40px)
+        // font-size: 40px;
+        // display: flex;
+        // align-items: center;
+        // justify-content: center;
+        // padding-bottom: 10px;
+        // height: 60px;
+        // width: 60px;
+        // border-radius: 50%;
+        // background-color: black;
+        // color: white;
+      }
+    }
+    .icon-more {
+      transform: translate(-25px, 30px);
+    }
+  }
+}
+
+
+.detail-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    .avatar {
+      flex: none;
+      @include avatar(40px)
+    }
+
+    .u-info {
+      flex: none;
+      text-align: left;
+      font-size: 26px;
+      display: grid;
+      grid-template-columns: 60px auto 1fr;
+      column-gap: 6px;
+      row-gap: 8px;
+      justify-items: start;
+      > * {
+        line-height: 26px;
+      }
+      .label {
+        width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .uname {
+      }
+  
+      .uid {
+    
+      }
+    }
+
+  }
+}

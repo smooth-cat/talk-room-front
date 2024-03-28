@@ -1,0 +1,31 @@
+.room-list-page {
+  width: 100%;
+  height: 100%;
+  .room-list {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    gap: 12px;
+    .room-item {
+      width: 200px;
+      height: 200px;
+      border-radius: 4px;
+      box-shadow: 0px 0px 5px #b9b8b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: relative;
+      .member-count {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        font-size: 24px;
+      }
+    }
+  }
+
+  .empty-text {
+
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "id": "4481248",
+  "name": "talk-room",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7587751",
+      "name": "下",
+      "font_class": "xia",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "1112713",
+      "name": "close",
+      "font_class": "close",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "16711166",
+      "name": "more",
+      "font_class": "more",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "6901060",
+      "name": "plus-border",
+      "font_class": "plus-border",
+      "unicode": "e627",
+      "unicode_decimal": 58919
+    },
+    {
+      "icon_id": "11607883",
+      "name": "离开",
+      "font_class": "likai",
+      "unicode": "e646",
+      "unicode_decimal": 58950
+    },
+    {
+      "icon_id": "29522659",
+      "name": "17A发送",
+      "font_class": "a-17Afasong",
+      "unicode": "e67d",
+      "unicode_decimal": 59005
+    }
+  ]
+}
