@@ -11,7 +11,7 @@ import Taro from "@tarojs/taro";
 class App extends Component {
   async componentDidMount() {
     // 初始 websocket
-    store.wsStore.connect("ws://192.168.0.104:8080");
+    store.wsStore.connect(`ws://${process.env.WsIp}:8080`);
   }
 
   componentDidShow() {}

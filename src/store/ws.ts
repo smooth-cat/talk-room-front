@@ -186,6 +186,20 @@ export class WsStore extends Eventemitter {
     console.log({ onmessage: msg });
     this.emit(WsEvent.Onmessage, msg);
   };
+  onMsg = (types: (MsgType[]|MsgType), callback: (msg: Msg, matchIndex: number) => any) => {
+    types = typeof types === 'string' ? [types] : types;
+    function handleMsg(msg: Msg) {
+      const type = msg.type;
+      const matchIndex = types.indexOf(type);
+      if(matchIndex !== -1) {
+        callback(msg, matchIndex);
+      }
+    }
+    this.on(WsEvent.Onmessage,handleMsg);
+    return () => {
+      this.off(WsEvent.Onmessage,handleMsg);
+    }
+  }
   onerror: WebSocket["onerror"] = (e) => {
     this.setWsStatus(WsStatus.Errored);
     console.log("ws连接出错", e);

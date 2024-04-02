@@ -82,17 +82,20 @@ const RoomList: FC<IRoomListProps> = observer(({}) => {
 
   // 实时更新房间信息
   useEffect(() => {
-    function refreshRoomList(msg) {
-      const type = msg?.type;
-      // 触发获取房间列表接口
-      if (type === MsgType.refresh_room_list) {
-        inc();
-      }
+    function refreshRoomList(msg: Msg) {
+      // const type = msg?.type;
+      // // 触发获取房间列表接口
+      // if (type === MsgType.refresh_room_list) {
+      //   inc();
+      // }
+      inc();
     }
 
-    wsStore.on(WsEvent.Onmessage, refreshRoomList);
+    // wsStore.on(WsEvent.Onmessage, refreshRoomList);
+    const dispose = wsStore.onMsg(MsgType.refresh_room_list, refreshRoomList);
     return () => {
-      wsStore.off(WsEvent.Onmessage, refreshRoomList);
+      // wsStore.off(WsEvent.Onmessage, refreshRoomList);
+      dispose();
     };
   }, []);
 

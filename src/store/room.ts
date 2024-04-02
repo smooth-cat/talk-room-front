@@ -4,7 +4,7 @@ import { Msg, MsgType } from "@/type/msg";
 import axios from "axios";
 import { WsEvent, isChatMsg } from "./ws";
 import { last, throttle } from "lodash";
-import { pipe, sortBy, uniqBy } from 'lodash/fp';
+import { pipe, sortBy, uniqBy } from "lodash/fp";
 import Taro, { getCurrentInstance } from "@tarojs/taro";
 import { toast } from "@/tools/alert";
 import { apEq } from "@/tools";
@@ -32,7 +32,7 @@ export class RoomStore {
   sortList = pipe<[Msg[]], Msg[], Msg[]>(
     uniqBy((it) => it.msgId),
     sortBy((it) => it.msgId)
-  )
+  );
 
   @observable lastMsgId: string = "";
 
@@ -97,33 +97,41 @@ export class RoomStore {
     });
     const room = res.data;
     const { msgList, ...roomInfo } = room;
-    this.releaseStackingMsg(msgList)
+    this.releaseStackingMsg(msgList);
     this.setRoomInfo(roomInfo);
     Taro.hideLoading();
   };
 
+  disposes: Function[] = [];
   /** 监听远端消息 */
   @action listen = () => {
     this.root.wsStore.on(WsEvent.Onmessage, this.onRemoteMsg);
     this.root.wsStore.on(WsEvent.OnReconnected, this.onReconnect);
     window.addEventListener("beforeunload", this.onBeforeUnload);
+    this.disposes.push(
+      this.root.wsStore.onMsg(MsgType.refresh_room_user, this.onRefreshRoomUser)
+    );
   };
   /** 取消监听远端消息 */
   @action removeListener = () => {
     this.root.wsStore.off(WsEvent.Onmessage, this.onRemoteMsg);
     this.root.wsStore.off(WsEvent.OnReconnected, this.onReconnect);
     window.removeEventListener("beforeunload", this.onBeforeUnload);
+    this.disposes.forEach((fn) => fn());
   };
 
-  stackingMsg:Msg[] = [];
+  stackingMsg: Msg[] = [];
   isStacking = false;
-  startStacking = () => this.isStacking = true;
-  @action onReconnect = async() => {
+  startStacking = () => (this.isStacking = true);
+  @action onReconnect = async () => {
     console.log("发送重连消息");
-    this.startStacking()
+    this.startStacking();
     const { content: listToBePush } = await this.root.wsStore.promiseSend({
       type: MsgType.reconnect,
-      content: { roomId: this.roomInfo.roomId, lastMsgId: last(this.msgList)?.msgId },
+      content: {
+        roomId: this.roomInfo.roomId,
+        lastMsgId: last(this.msgList)?.msgId,
+      },
     });
     this.releaseStackingMsg(listToBePush);
   };
@@ -134,24 +142,24 @@ export class RoomStore {
     this.delayGotoBottom();
     this.stackingMsg = [];
     this.isStacking = false;
-  }
+  };
 
   @action onRemoteMsg = (msg: Msg) => {
     if (isChatMsg(msg)) {
       // 避免请求获取的消息列表 和 ws 来的消息 出现顺序颠倒瞬间
-      if(this.isStacking) {
+      if (this.isStacking) {
         this.stackingMsg.push(msg);
       } else {
         this.setMsgList([...this.msgList, msg]);
         this.showNewMsgBtn();
       }
     }
+  };
 
-    // 把新的 userList 获取到
-    if (msg.type === MsgType.refresh_room_user) {
-      const userList = msg.content;
-      this.setRoomInfo({ userList });
-    }
+  // 把新的 userList 获取到
+  @action onRefreshRoomUser = (msg: Msg) => {
+    const userList = msg.content;
+    this.setRoomInfo({ userList });
   };
 
   /*----------------- 输入框 -----------------*/
@@ -270,7 +278,7 @@ export class RoomStore {
     setTimeout(() => {
       this.gotoBottom();
     }, time);
-  }
+  };
 
   @action gotoBottom = () => {
     if (!this.dom) {
