@@ -1,14 +1,14 @@
 import { RoomStore } from "./room";
 import { UserStore } from "./user";
-import { WsStore } from "./ws";
+import { WS } from "./ws";
 
 export class RootStore {
   roomStore: RoomStore
-  wsStore: WsStore
+  wsStore: WS
   userStore: UserStore;
 }
 
 export const store = new RootStore()
 store.roomStore = new RoomStore(store)
-store.wsStore = new WsStore(store)
+store.wsStore = new WS()
 store.userStore = new UserStore(store)

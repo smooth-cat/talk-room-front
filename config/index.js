@@ -67,9 +67,18 @@ const config = {
       }
     },
     devServer: {
+      https: true,
       proxy: {
         '/api/': {
           target: 'http://localhost:3000',
+          changeOrigin: true
+        },
+        '/ws': {
+          target: 'http://localhost:8000',
+          changeOrigin: true
+        },
+        '/ws-rtc': {
+          target: 'http://localhost:7777',
           changeOrigin: true
         }
       }

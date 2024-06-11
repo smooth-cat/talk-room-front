@@ -1,11 +1,11 @@
 import { msg2Text, text2Msg } from "@/tools/msg-parse";
-import { RootStore } from "./root";
 import { Msg, MsgType } from "@/type/msg";
 import Eventemitter from "eventemitter3";
-import { action, observable } from "mobx";
 import { pick } from "lodash";
 import { DateString } from "@/tools/date";
 import { v4 } from "uuid";
+import { Con } from "@/tools/log";
+import { AsyncQueue } from "@/tools/async-queue";
 export enum CloseCode {
   /** 心跳丢失 */
   HeartbeatLost = 4998,
@@ -39,13 +39,6 @@ export const isChatMsg = (msg: Msg) => {
   return msg.type[0] === msg.type[0].toUpperCase();
 };
 
-export type WebSocketEvents = Partial<
-  Pick<WebSocket, "onopen" | "onclose" | "onerror">
-> & {
-  onmessage?: (msg: Msg) => void;
-  onLoginSuccess?: (msg: Msg) => void;
-};
-
 const DefaultOpt = {
   /** 心跳达到该次数则确认连接中断，关闭 websocket */
   maxHeartbeatLoseCount: 3,
@@ -57,6 +50,8 @@ const DefaultOpt = {
   reconnectInterval: 5000,
   /** 是否自动连接 */
   autoReconnect: true,
+  /** 是否显示 ws 日志 */
+  debug: false,
 };
 export type ConnectOpt = typeof DefaultOpt;
 
@@ -65,13 +60,15 @@ export type Heartbeat = {
   timer: NodeJS.Timeout;
 };
 
-export class WsStore extends Eventemitter {
-  constructor(private root: RootStore) {
+export class WS<T extends string = MsgType> extends Eventemitter {
+  con = new Con()
+  log = this.con.log
+  constructor() {
     super();
   }
 
-  @observable wsStatus: WsStatus = WsStatus.Closed;
-  @action setWsStatus = (wsStatus: WsStatus) => {
+  wsStatus: WsStatus = WsStatus.Closed;
+  setWsStatus = (wsStatus: WsStatus) => {
     this.wsStatus = wsStatus;
   };
 
@@ -90,6 +87,7 @@ export class WsStore extends Eventemitter {
     // TODO: 是否需要延迟检测
     this.opt = { ...DefaultOpt, ...opt };
     this.url = url;
+    this.con.shouldLog = Boolean(opt.debug)
     this.socket = new WebSocket(url);
     this.abortController = new AbortController();
 
@@ -176,6 +174,7 @@ export class WsStore extends Eventemitter {
   onmessage: WebSocket["onmessage"] = (e) => {
     const msg = text2Msg(e.data);
     if (msg.requestId) {
+      msg.type===MsgType.rtc_join && console.log('收到含requestid的join', msg);
       this.promiseList.get(msg.requestId)?.resolve(msg);
       this.promiseList.delete(msg.requestId);
     }
@@ -183,7 +182,7 @@ export class WsStore extends Eventemitter {
       this.onHeartbeat(msg.content);
       return;
     }
-    console.log({ onmessage: msg });
+    this.log(msg, 'ws消息接收')
     this.emit(WsEvent.Onmessage, msg);
   };
   onMsg = (types: (MsgType[]|MsgType), callback: (msg: Msg, matchIndex: number) => any) => {
@@ -209,14 +208,21 @@ export class WsStore extends Eventemitter {
   onclose = (e) => {
     this.setWsStatus(WsStatus.Closed);
     console.log("ws关闭成功", e);
-    // TODO: 判断是否手动关闭
     this.emit(WsEvent.Onclose, e);
     if (e.code !== CloseCode.Normal) {
       this.opt.autoReconnect && this.reconnect(e);
+      return;
     }
+    // 用户手动关闭时就应该移除所有事件监听避免内存泄露
+    this.removeAllListeners();
+    // 初始化对象
+    this.resetStore();
   };
 
   send = (msg: Msg) => {
+    if(msg.type !== MsgType.heartbeat) {
+      this.log(msg, 'ws消息发送')
+    }
     const dataString = msg2Text({
       ...msg,
       timestamp: DateString("YYYY/MM/DD HH:mm:ss"),
@@ -243,15 +249,31 @@ export class WsStore extends Eventemitter {
   promiseList = new Map<string, PromiseTrigger>();
   promiseSend = (msg: Msg) => {
     const requestId = v4();
-    return new Promise<Msg>((resolve, reject) => {
+    return new Promise<Msg|null>((resolve, reject) => {
       this.promiseList.set(requestId, { resolve, reject });
       this.send({ ...msg, requestId });
       // 15秒未收到则视为请求过期
       setTimeout(() => {
-        reject();
+        resolve(null);
+        this.promiseList.delete(requestId);
       }, 15 * 1000);
     });
   };
+
+  /** 产生一个串行的发送消息队列 */
+  createSendQueue = () => {
+    const ins = AsyncQueue.instance;
+    return {
+      send: ins.delayCall(this.promiseSend)
+    }
+  }
+
+  init = (initData: any) => {
+    return this.promiseSend({
+      type: MsgType.init,
+      content: initData,
+    })
+  }
 
   heartbeatList: Heartbeat[] = [];
   heartbeatId = 0;

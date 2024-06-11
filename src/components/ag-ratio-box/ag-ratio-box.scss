@@ -1,0 +1,14 @@
+.ag-ratio-box-wrapper {
+  position: relative;
+  .ag-ratio-box-placeholder {
+    width: 100%;
+  }
+  .ag-ratio-box-content {
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+}

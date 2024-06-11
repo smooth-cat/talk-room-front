@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "6776383",
+      "name": "摄像头_关闭",
+      "font_class": "shexiangtou_guanbi",
+      "unicode": "eca5",
+      "unicode_decimal": 60581
+    },
+    {
+      "icon_id": "6776384",
+      "name": "摄像头",
+      "font_class": "shexiangtou",
+      "unicode": "eca6",
+      "unicode_decimal": 60582
+    },
+    {
+      "icon_id": "6776387",
+      "name": "声音开",
+      "font_class": "shengyinkai",
+      "unicode": "eca7",
+      "unicode_decimal": 60583
+    },
+    {
+      "icon_id": "6776390",
+      "name": "声音无",
+      "font_class": "shengyinwu",
+      "unicode": "eca8",
+      "unicode_decimal": 60584
+    },
+    {
+      "icon_id": "6776437",
+      "name": "声音静音",
+      "font_class": "shengyinjingyin",
+      "unicode": "eca9",
+      "unicode_decimal": 60585
+    },
+    {
       "icon_id": "7587751",
       "name": "下",
       "font_class": "xia",

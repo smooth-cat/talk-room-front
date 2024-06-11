@@ -132,8 +132,8 @@ export class RoomStore {
         roomId: this.roomInfo.roomId,
         lastMsgId: last(this.msgList)?.msgId,
       },
-    });
-    this.releaseStackingMsg(listToBePush);
+    }) || {};
+    this.releaseStackingMsg(listToBePush || []);
   };
 
   releaseStackingMsg = (fetchedList: Msg[] = []) => {
@@ -195,7 +195,7 @@ export class RoomStore {
       roomId: this.roomInfo.roomId,
     });
     if (isBtnClose) {
-      Taro.navigateTo({ url: "/pages/index/index" });
+      Taro.switchTab({ url: "/pages/index/index" });
     }
   };
 
@@ -287,4 +287,12 @@ export class RoomStore {
     this.scrollIntoView(this.dom, "end");
     this.setBtnVisible(false);
   };
+
+  @observable rtcVisible: boolean = false;
+  
+  @action setRtcVisible = (rtcVisible: boolean) => {
+    this.rtcVisible = rtcVisible;
+  }
+  
+  
 }

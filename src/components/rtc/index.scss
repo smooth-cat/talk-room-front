@@ -1,0 +1,22 @@
+.video-item {
+  position: relative;
+  .controls {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 32px;
+    color: rgb(26, 26, 25);
+    background-color: whitesmoke;
+    border-radius: 16px;
+    padding: 12px 32px;
+    box-shadow: 1px 1px 3px #acacac;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 24px;
+  }
+}
+
+.disable-icon-style {
+  color: gray;
+}

@@ -1,7 +1,7 @@
-import Taro, { FC } from "@tarojs/taro";
+import Taro, { FC, useDidHide } from "@tarojs/taro";
 import { Button, Input, ScrollView, View } from "@tarojs/components";
 import "./index.scss";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { store } from "@/store/root";
 import { Msg, MsgType } from "@/type/msg";
 import Text from "./message/text";
@@ -11,6 +11,7 @@ import Icon from "@/components/icon";
 import UserList from "./user-list";
 import { useDynamicCssVar } from "@/hooks/use-dynamic-css-var";
 import { multipleColor } from "@/tools/color";
+import { RTCRoom } from "@/components/rtc";
 
 export type IRoomProps = {
   uid: string;
@@ -38,6 +39,8 @@ const Room: FC<IRoomProps> = observer(({  }) => {
       onScroll,
       gotoBottom,
       onUserScroll,
+      setRtcVisible,
+      rtcVisible,
     },
     userStore : {
       user
@@ -82,6 +85,12 @@ const Room: FC<IRoomProps> = observer(({  }) => {
     '--user-color-dark': userColorDark,
   })
 
+  useDidHide(() => {
+    console.log('触发didhide');
+  })
+
+
+  const startVideoChat = useRef<() => any>(() => {});
   return (
     <View className={roomPageClass}>
       <View className="room-title">
@@ -111,8 +120,9 @@ const Room: FC<IRoomProps> = observer(({  }) => {
           color={userColor}
           className="icon-plus-border send-util-exit"
           size={60}
+          onClick={() => startVideoChat.current()}
         />
-
+        <RTCRoom startVideoChat={startVideoChat} uids={(roomInfo.userList || []).map(it => it.uid)}  />
         <input
           className="send-util-input"
           value={input}
