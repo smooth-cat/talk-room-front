@@ -893,9 +893,13 @@ const createExtendStream = (
       const newVolume = extStream.local
         ? extStream.volume
         : extStream.volume * extStream.info.remoteVolume;
-      for (const [_, el] of extStream["elMap"]) {
+      // for (const [_, el] of extStream["elMap"]) {
+      //   el.volume = newVolume;
+      // }
+
+      extStream["elMap"].forEach((el) => {
         el.volume = newVolume;
-      }
+      })
     };
   });
 

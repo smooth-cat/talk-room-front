@@ -1,5 +1,9 @@
 .pop-content {
-  transition: ease-in-out 1s;
-  background-color: red;
+  transition: ease-in-out .1s;
+  // background-color: red;
   overflow: hidden;
+}
+.popup-child {
+  width: fit-content;
+  height: fit-content;
 }

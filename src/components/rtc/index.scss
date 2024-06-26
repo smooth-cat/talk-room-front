@@ -5,8 +5,8 @@
     right: 10px;
     bottom: 10px;
     font-size: 32px;
-    color: rgb(26, 26, 25);
-    background-color: whitesmoke;
+    color: whitesmoke;
+    background-color: rgb(26, 26, 25);
     border-radius: 16px;
     padding: 12px 32px;
     box-shadow: 1px 1px 3px #acacac;
@@ -15,8 +15,17 @@
     justify-content: flex-end;
     gap: 24px;
   }
+
+  .btn {
+    padding: 6px;
+  }
+  .btn-active {
+    background: rgb(68 68 68 / 65%);
+    border-radius: 50px;
+  }
 }
 
 .disable-icon-style {
   color: gray;
 }
+

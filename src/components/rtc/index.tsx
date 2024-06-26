@@ -16,6 +16,8 @@ import { RatioBox, ResizeMode } from "../ag-ratio-box";
 import Icon from "../icon";
 import classNames from "classnames";
 import { toast } from "@/tools/alert";
+import Popup from "../popup";
+import SoundSlider from "./sound-slider";
 
 export type IRTCRoomProps = {
   uids: string[];
@@ -74,7 +76,10 @@ export const RTCRoom: FC<IRTCRoomProps> = ({ startVideoChat, uids }) => {
   };
 
   const toggleMedia = (stream: ExtendStream, type: "video" | "audio") => {
-    if (!stream.local && stream.info[type === 'video' ? 'remoteVideoMuted' : 'remoteAudioMuted']) {
+    if (
+      !stream.local &&
+      stream.info[type === "video" ? "remoteVideoMuted" : "remoteAudioMuted"]
+    ) {
       toast(`对方关闭了${type === "video" ? "摄像头" : "麦克风"}！`);
       return;
     }
@@ -119,19 +124,40 @@ export const RTCRoom: FC<IRTCRoomProps> = ({ startVideoChat, uids }) => {
                     !isLocal && stream.info.remoteVideoMuted,
                 })}
               ></Icon>
-              <Icon
-                onClick={() => toggleMedia(stream, "audio")}
-                size={40}
-                className={classNames({
-                  "icon-shengyinjingyin":
-                    stream.audioMuted || stream.info.remoteAudioMuted,
-                  "icon-shengyinkai":
-                    !stream.audioMuted && !stream.info.remoteAudioMuted,
-                  // 远程屏蔽按钮呈灰色
-                  "disable-icon-style":
-                    !isLocal && stream.info.remoteAudioMuted,
-                })}
-              ></Icon>
+              <Popup
+                offset={{ y: -8 }}
+                popContent={
+                  <SoundSlider
+                    trackHeight={130}
+                    volume={stream.volume}
+                    setVolume={(v) => (stream.volume = v)}
+                    muted={stream.audioMuted}
+                  />
+                }
+              >
+                {(visible) => (
+                  <div className={classNames('btn',{
+                    'btn-active': visible
+                  })}>
+                    <Icon
+                      // onClick={() => toggleMedia(stream, "audio")}
+                      size={40}
+                      className={classNames(
+                        stream.audioMuted || stream.info.remoteAudioMuted
+                          ? "icon-shengyinjingyin"
+                          : stream.volume === 0
+                          ? "icon-shengyinwu"
+                          : "icon-shengyinkai",
+                        {
+                          // 远程屏蔽按钮呈灰色
+                          "disable-icon-style":
+                            !isLocal && stream.info.remoteAudioMuted,
+                        }
+                      )}
+                    ></Icon>
+                  </div>
+                )}
+              </Popup>
             </View>
           </View>
         );
